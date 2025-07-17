@@ -51,10 +51,8 @@
         header h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #00008B;
+            text-shadow: 0 0 8px #ffaa00; /* Yellow-orange glow */
         }
 
         header p {
@@ -62,7 +60,9 @@
             max-width: 700px;
             margin: 0 auto;
             opacity: 0.9;
-            color: #e0e0ff;
+            color: #00008B;
+
+  			font-weight: 600;
         }
 
         .app-container {
@@ -313,7 +313,7 @@
 
         .chart {
             display: flex;
-            height: 240px;
+            height: 280px;
             align-items: flex-end;
             gap: 12px;
             padding: 20px 0;
@@ -335,18 +335,18 @@
 
         .bar-label {
             position: absolute;
-            bottom: -45px;
+            bottom: -55px;
             width: 100%;
             text-align: center;
             font-size: 0.9rem;
             font-weight: 600;
             color: #2c3e50;
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             padding: 5px 0;
             background: rgba(255, 255, 255, 0.8);
             border-radius: 6px;
+            white-space: nowrap;
         }
 
         .bar-value {
@@ -597,11 +597,23 @@
 
         footer {
             text-align: center;
-            color: white;
-            padding: 20px;
-            font-size: 0.95rem;
-            opacity: 0.85;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+ 			color: #0000FF;
+  			text-shadow: 0 0 8px #ffaa00; /* Yellow-orange glow */
+  			font-weight: 500; /* Slightly bolder */
+  			font-size: 1.1rem; /* Slightly larger */
+        }
+
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+        }
+
+        .top-panels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
         }
 
         @media (max-width: 768px) {
@@ -654,6 +666,10 @@
             .bar {
                 min-width: 30px;
             }
+
+            .top-panels {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -661,59 +677,61 @@
     <div class="container">
         <header>
             <h1>Advanced Drawing Lots App</h1>
-            <p>Create custom drawings with adjustable probabilities and track your results</p>
+            <p>Create custom drawings with adjustable probabilities</p>
         </header>
         
-        <div class="app-container">
-            <div class="panel">
-                <h2><i class="fas fa-plus"></i> Add Items</h2>
-                <div class="form-group">
-                    <label for="itemName">Item Name</label>
-                    <input type="text" id="itemName" placeholder="Enter item name">
-                </div>
-                <div class="form-group">
-                    <label for="itemProbability">Probability Weight (1-100)</label>
-                    <input type="number" id="itemProbability" min="1" max="100" value="10" step="0.1">
-                </div>
-                <button id="addButton">
-                    <i class="fas fa-plus-circle"></i> Add Item
-                </button>
-                
-                <div class="fast-add-section">
-                    <h3><i class="fas fa-bolt"></i> Fast Add</h3>
+        <div class="app-layout">
+            <div class="top-panels">
+                <div class="panel">
+                    <h2><i class="fas fa-plus"></i> Add Items</h2>
                     <div class="form-group">
-                        <label for="itemCount">Number of Items to Add</label>
-                        <div class="dual-input">
-                            <input type="number" id="itemCount" min="1" value="5" placeholder="Number of items">
-                            <input type="text" id="itemPrefix" placeholder="Prefix (optional)" value="">
+                        <label for="itemName">Item Name</label>
+                        <input type="text" id="itemName" placeholder="Enter item name">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemProbability">Probability Weight (1-100)</label>
+                        <input type="number" id="itemProbability" min="1" max="100" value="10" step="0.1">
+                    </div>
+                    <button id="addButton">
+                        <i class="fas fa-plus-circle"></i> Add Item
+                    </button>
+                    
+                    <div class="fast-add-section">
+                        <h3><i class="fas fa-bolt"></i> Fast Add</h3>
+                        <div class="form-group">
+                            <label for="itemCount">Number of Items to Add</label>
+                            <div class="dual-input">
+                                <input type="number" id="itemCount" min="1" value="5" placeholder="Number of items">
+                                <input type="text" id="itemPrefix" placeholder="Prefix (optional)" value="">
+                            </div>
                         </div>
+                        <button id="fastAddButton">
+                            <i class="fas fa-bolt"></i> Add Multiple Items
+                        </button>
                     </div>
-                    <button id="fastAddButton">
-                        <i class="fas fa-bolt"></i> Add Multiple Items
-                    </button>
                 </div>
-            </div>
-            
-            <div class="panel">
-                <h2><i class="fas fa-list"></i> Items in Draw</h2>
-                <ul id="itemsList">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No items added yet</p>
-                        <p>Add items to get started!</p>
-                    </div>
-                </ul>
                 
-                <div class="tool-buttons">
-                    <button id="evenDistButton">
-                        <i class="fas fa-balance-scale"></i> Distribute Evenly
-                    </button>
-                    <button id="clearAllButton">
-                        <i class="fas fa-trash-alt"></i> Clear All
-                    </button>
-                    <button id="resetDrawsButton">
-                        <i class="fas fa-redo"></i> Reset Draws
-                    </button>
+                <div class="panel">
+                    <h2><i class="fas fa-list"></i> Items in Draw</h2>
+                    <ul id="itemsList">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No items added yet</p>
+                            <p>Add items to get started!</p>
+                        </div>
+                    </ul>
+                    
+                    <div class="tool-buttons">
+                        <button id="evenDistButton">
+                            <i class="fas fa-balance-scale"></i> Distribute Evenly
+                        </button>
+                        <button id="clearAllButton">
+                            <i class="fas fa-trash-alt"></i> Clear All
+                        </button>
+                        <button id="resetDrawsButton">
+                            <i class="fas fa-redo"></i> Reset Draws
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -765,7 +783,7 @@
         </div>
         
         <footer>
-            <p>Made with ❤️ | Advanced Drawing Lots App | Custom probabilities and advanced tools</p>
+            <p>Advanced Drawing Lots App | Customized Probabilities</p>
         </footer>
     </div>
 
