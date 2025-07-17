@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Drawing Lots App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #a1c4fd);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+            color: #e0e0ff;
+        }
+
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            padding: 30px;
+            flex: 1;
+            min-width: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .panel:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .panel h2 i {
+            background: #e3f2fd;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1.05rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+            background: white;
+        }
+
+        button {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(to right, #2980b9, #1a252f);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #drawButton, #drawWithoutReplacement {
+            padding: 16px 32px;
+            font-size: 1.25rem;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        #drawButton {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+
+        #drawWithoutReplacement {
+            background: linear-gradient(to right, #7b4397, #dc2430);
+        }
+
+        #drawButton:hover {
+            background: linear-gradient(to right, #3da1fe, #00e0f2);
+        }
+
+        #drawWithoutReplacement:hover {
+            background: linear-gradient(to right, #6a3093, #d41d2a);
+        }
+
+        #itemsList {
+            list-style: none;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            padding: 15px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            animation: slideIn 0.4s ease;
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .item-name {
+            font-weight: 600;
+            flex: 1;
+            min-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .probability-input {
+            width: 85px;
+            padding: 10px 12px;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f8f9fa;
+            font-size: 1.05rem;
+        }
+
+        .probability-slider {
+            width: 140px;
+            height: 10px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .probability-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 3px solid #3498db;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .probability-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: #f1f1f1;
+        }
+
+        .delete-btn {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .delete-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .visualization {
+            background: linear-gradient(to bottom, #e3f2fd, #f8f9fa);
+            border-radius: 15px;
+            padding: 22px;
+            margin-top: 25px;
+        }
+
+        .chart-container {
+            overflow-x: auto;
+            width: 100%;
+            padding-bottom: 15px;
+            border-radius: 12px;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart {
+            display: flex;
+            height: 240px;
+            align-items: flex-end;
+            gap: 12px;
+            padding: 20px 0;
+            min-width: min-content;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bar {
+            flex: 1;
+            min-width: 40px;
+            max-width: 80px;
+            background: linear-gradient(to top, #3498db, #2c3e50);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: height 1s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -45px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 5px 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -35px;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            color: #3498db;
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-container {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(to bottom right, #e3f2fd, #f8f9fa);
+            border-radius: 15px;
+            margin-top: 25px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        #winnerDisplay {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #e74c3c;
+            margin: 20px 0;
+            text-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+            min-height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .drawing {
+            animation: pulse 1.5s infinite;
+        }
+
+        .tool-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .tool-buttons button {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        #evenDistButton {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+        }
+
+        #evenDistButton:hover {
+            background: linear-gradient(to right, #27ae60, #219653);
+        }
+
+        #fastAddButton {
+            background: linear-gradient(to right, #f39c12, #e67e22);
+            color: white;
+        }
+
+        #fastAddButton:hover {
+            background: linear-gradient(to right, #e67e22, #d35400);
+        }
+
+        #clearAllButton {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+
+        #resetDrawsButton {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+        }
+
+        .fast-add-section {
+            background: #e3f2fd;
+            padding: 22px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px dashed #3498db;
+        }
+
+        .dual-input {
+            display: flex;
+            gap: 15px;
+        }
+
+        .dual-input input {
+            flex: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+
+        .highlight {
+            animation: highlight 2s ease;
+        }
+
+        .drawn-item {
+            opacity: 0.7;
+            position: relative;
+            border-left-color: #95a5a6;
+        }
+
+        .drawn-item::after {
+            content: "DRAWN";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(149, 165, 166, 0.9);
+            color: white;
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .history-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 22px;
+            margin-top: 25px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-item {
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #3498db;
+        }
+
+        .history-winner {
+            font-weight: 600;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .history-prob {
+            font-weight: 600;
+            color: #e74c3c;
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .history-type {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            background: #ecf0f1;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-left: 15px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .history-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        #clearHistory {
+            background: #95a5a6;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        @keyframes highlight {
+            0% { 
+                background-color: #ffd700; 
+                transform: scale(1.05);
+            }
+            100% { 
+                background-color: transparent;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.4; transform: scale(0.98); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            top: 0;
+            opacity: 0;
+            z-index: 1000;
+            border-radius: 50%;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 0.95rem;
+            opacity: 0.85;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .panel {
+                min-width: 100%;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .dual-input {
+                flex-direction: column;
+            }
+            
+            .tool-buttons {
+                flex-direction: column;
+            }
+            
+            .item {
+                flex-wrap: wrap;
+            }
+            
+            .item-name {
+                min-width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .item-controls {
+                min-width: 100%;
+                justify-content: space-between;
+            }
+            
+            .probability-input {
+                width: 70px;
+            }
+            
+            .probability-slider {
+                width: 100%;
+            }
+            
+            .chart {
+                gap: 6px;
+            }
+            
+            .bar {
+                min-width: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Drawing Lots App</h1>
+            <p>Create custom drawings with adjustable probabilities and track your results</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="panel">
+                <h2><i class="fas fa-plus"></i> Add Items</h2>
+                <div class="form-group">
+                    <label for="itemName">Item Name</label>
+                    <input type="text" id="itemName" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label for="itemProbability">Probability Weight (1-100)</label>
+                    <input type="number" id="itemProbability" min="1" max="100" value="10" step="0.1">
+                </div>
+                <button id="addButton">
+                    <i class="fas fa-plus-circle"></i> Add Item
+                </button>
+                
+                <div class="fast-add-section">
+                    <h3><i class="fas fa-bolt"></i> Fast Add</h3>
+                    <div class="form-group">
+                        <label for="itemCount">Number of Items to Add</label>
+                        <div class="dual-input">
+                            <input type="number" id="itemCount" min="1" value="5" placeholder="Number of items">
+                            <input type="text" id="itemPrefix" placeholder="Prefix (optional)" value="">
+                        </div>
+                    </div>
+                    <button id="fastAddButton">
+                        <i class="fas fa-bolt"></i> Add Multiple Items
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2><i class="fas fa-list"></i> Items in Draw</h2>
+                <ul id="itemsList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No items added yet</p>
+                        <p>Add items to get started!</p>
+                    </div>
+                </ul>
+                
+                <div class="tool-buttons">
+                    <button id="evenDistButton">
+                        <i class="fas fa-balance-scale"></i> Distribute Evenly
+                    </button>
+                    <button id="clearAllButton">
+                        <i class="fas fa-trash-alt"></i> Clear All
+                    </button>
+                    <button id="resetDrawsButton">
+                        <i class="fas fa-redo"></i> Reset Draws
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2><i class="fas fa-trophy"></i> Draw & Results</h2>
+                
+                <div class="visualization">
+                    <h3>Probability Distribution</h3>
+                    <div class="chart-container">
+                        <div class="chart" id="probabilityChart">
+                            <div class="empty-state">
+                                <i class="fas fa-chart-bar"></i>
+                                <p>No data to display</p>
+                                <p>Add items to see probability visualization</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="drawButton">
+                    <i class="fas fa-dice"></i> Draw Winner (With Replacement)
+                </button>
+                
+                <button id="drawWithoutReplacement">
+                    <i class="fas fa-dice"></i> Draw Winner (Without Replacement)
+                </button>
+                
+                <div class="result-container">
+                    <div id="winnerDisplay">Ready to draw!</div>
+                    <p id="probabilityInfo">Add items and draw to see results</p>
+                </div>
+                
+                <div class="history-container">
+                    <div class="history-header">
+                        <div class="history-title">Draw History</div>
+                        <button id="clearHistory">
+                            <i class="fas fa-trash"></i> Clear History
+                        </button>
+                    </div>
+                    <div id="historyList">
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <p>No draw history yet</p>
+                            <p>Draw winners to see history</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Made with ❤️ | Advanced Drawing Lots App | Custom probabilities and advanced tools</p>
+        </footer>
+    </div>
+
+    <script>
+        // Items array with drawn status
+        const items = [];
+        let drawHistory = [];
+        
+        // DOM Elements
+        const itemsList = document.getElementById('itemsList');
+        const addButton = document.getElementById('addButton');
+        const fastAddButton = document.getElementById('fastAddButton');
+        const evenDistButton = document.getElementById('evenDistButton');
+        const drawButton = document.getElementById('drawButton');
+        const drawWithoutReplacement = document.getElementById('drawWithoutReplacement');
+        const clearAllButton = document.getElementById('clearAllButton');
+        const resetDrawsButton = document.getElementById('resetDrawsButton');
+        const clearHistoryButton = document.getElementById('clearHistory');
+        const winnerDisplay = document.getElementById('winnerDisplay');
+        const probabilityInfo = document.getElementById('probabilityInfo');
+        const probabilityChart = document.getElementById('probabilityChart');
+        const historyList = document.getElementById('historyList');
+        
+        // Initialize the app
+        function init() {
+            renderItems();
+            updateProbabilityChart();
+            updateHistory();
+        }
+        
+        // Render items to the list
+        function renderItems() {
+            if (items.length === 0) {
+                itemsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No items added yet</p>
+                        <p>Add items to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            itemsList.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'item';
+                if (item.drawn) {
+                    li.classList.add('drawn-item');
+                }
+                
+                li.innerHTML = `
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-controls">
+                        <input type="number" class="probability-input" min="0.1" max="100" step="0.1" 
+                               value="${item.probability.toFixed(1)}" data-index="${index}" ${item.drawn ? 'disabled' : ''}>
+                        <input type="range" min="0.1" max="100" value="${item.probability}" step="0.1"
+                               class="probability-slider" data-index="${index}" ${item.drawn ? 'disabled' : ''}>
+                        <button class="delete-btn" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                itemsList.appendChild(li);
+            });
+            
+            // Add event listeners to inputs
+            document.querySelectorAll('.probability-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const index = this.getAttribute('data-index');
+                    const value = parseFloat(this.value);
+                    
+                    if (isNaN(value) || value < 0.1 || value > 100) {
+                        this.value = items[index].probability.toFixed(1);
+                        return;
+                    }
+                    
+                    items[index].probability = value;
+                    const slider = this.parentElement.querySelector('.probability-slider');
+                    slider.value = value;
+                    updateProbabilityChart();
+                });
+            });
+            
+            // Add event listeners to sliders
+            document.querySelectorAll('.probability-slider').forEach(slider => {
+                slider.addEventListener('input', function() {
+                    const index = this.getAttribute('data-index');
+                    const value = parseFloat(this.value);
+                    items[index].probability = value;
+                    const input = this.parentElement.querySelector('.probability-input');
+                    input.value = value.toFixed(1);
+                    updateProbabilityChart();
+                });
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    items.splice(index, 1);
+                    renderItems();
+                    updateProbabilityChart();
+                });
+            });
+        }
+        
+        // Update probability chart visualization
+        function updateProbabilityChart() {
+            if (items.length === 0) {
+                probabilityChart.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No data to display</p>
+                        <p>Add items to see probability visualization</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            probabilityChart.innerHTML = '';
+            
+            const totalProbability = items.reduce((sum, item) => sum + item.probability, 0);
+            
+            // Calculate maximum bar width based on number of items
+            const maxBarsPerRow = Math.min(items.length, 10);
+            const barWidth = `calc(${100 / maxBarsPerRow}% - 12px)`;
+            
+            items.forEach(item => {
+                const percentage = totalProbability > 0 ? 
+                    (item.probability / totalProbability) * 100 : 0;
+                
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${percentage * 1.8}px`;
+                bar.style.flex = `0 0 ${barWidth}`;
+                bar.innerHTML = `
+                    <div class="bar-value">${percentage.toFixed(1)}%</div>
+                    <div class="bar-label">${item.name}</div>
+                `;
+                
+                probabilityChart.appendChild(bar);
+            });
+        }
+        
+        // Update history display
+        function updateHistory() {
+            if (drawHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>No draw history yet</p>
+                        <p>Draw winners to see history</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            // Show latest first
+            [...drawHistory].reverse().forEach(entry => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-winner">${entry.winner}</div>
+                    <div class="history-prob">${entry.probability}%</div>
+                    <div class="history-type">${entry.type}</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Add new item
+        addButton.addEventListener('click', function() {
+            const nameInput = document.getElementById('itemName');
+            const probInput = document.getElementById('itemProbability');
+            
+            const name = nameInput.value.trim();
+            const probability = parseFloat(probInput.value);
+            
+            if (!name) {
+                return;
+            }
+            
+            if (isNaN(probability) || probability < 1 || probability > 100) {
+                return;
+            }
+            
+            items.push({ name, probability, drawn: false });
+            renderItems();
+            updateProbabilityChart();
+            
+            // Reset form
+            nameInput.value = '';
+            probInput.value = '10';
+            nameInput.focus();
+        });
+        
+        // Fast add multiple items
+        fastAddButton.addEventListener('click', function() {
+            const countInput = document.getElementById('itemCount');
+            const prefixInput = document.getElementById('itemPrefix');
+            
+            const count = parseInt(countInput.value);
+            const prefix = prefixInput.value.trim();
+            
+            if (isNaN(count) || count < 1) {
+                return;
+            }
+            
+            // Add items with just numbers if prefix is empty
+            for (let i = 1; i <= count; i++) {
+                const name = prefix ? `${prefix} ${i}` : `${i}`;
+                items.push({ name, probability: 10, drawn: false });
+            }
+            
+            renderItems();
+            updateProbabilityChart();
+        });
+        
+        // Distribute probabilities evenly
+        evenDistButton.addEventListener('click', function() {
+            if (items.length === 0) {
+                return;
+            }
+            
+            const total = 100;
+            const baseValue = total / items.length;
+            
+            // Set probabilities
+            items.forEach((item, index) => {
+                item.probability = parseFloat(baseValue.toFixed(1));
+            });
+            
+            renderItems();
+            updateProbabilityChart();
+        });
+        
+        // Clear all items
+        clearAllButton.addEventListener('click', function() {
+            items.length = 0;
+            drawHistory = [];
+            renderItems();
+            updateProbabilityChart();
+            winnerDisplay.innerHTML = 'Ready to draw!';
+            probabilityInfo.textContent = 'Add items and draw to see results';
+            updateHistory();
+        });
+        
+        // Reset all drawn status
+        resetDrawsButton.addEventListener('click', function() {
+            items.forEach(item => {
+                item.drawn = false;
+            });
+            drawHistory = [];
+            renderItems();
+            winnerDisplay.innerHTML = 'Ready to draw!';
+            probabilityInfo.textContent = 'Draws have been reset';
+            updateHistory();
+        });
+        
+        // Clear history
+        clearHistoryButton.addEventListener('click', function() {
+            drawHistory = [];
+            updateHistory();
+        });
+        
+        // Draw winner (with replacement)
+        drawButton.addEventListener('click', function() {
+            if (items.length === 0) {
+                return;
+            }
+            
+            // Calculate total probability
+            const totalProbability = items.reduce((sum, item) => sum + item.probability, 0);
+            
+            if (totalProbability <= 0) {
+                return;
+            }
+            
+            // Show drawing animation
+            winnerDisplay.textContent = 'Drawing...';
+            winnerDisplay.className = 'drawing';
+            probabilityInfo.textContent = 'Calculating probabilities...';
+            
+            // Simulate drawing delay
+            setTimeout(() => {
+                // Perform the draw
+                const winner = drawWinner();
+                
+                // Display winner
+                winnerDisplay.textContent = winner.name;
+                winnerDisplay.className = '';
+                
+                // Calculate and display probability
+                const percentage = (winner.probability / totalProbability * 100).toFixed(1);
+                probabilityInfo.textContent = `This item had a ${percentage}% chance of winning`;
+                
+                // Add to history
+                drawHistory.push({
+                    winner: winner.name,
+                    probability: percentage,
+                    time: new Date(),
+                    type: 'With Replacement'
+                });
+                updateHistory();
+                
+                // Create confetti effect
+                createConfetti();
+                
+                // Highlight the winner in the list
+                highlightWinner(winner.name);
+            }, 2000);
+        });
+        
+        // Draw winner without replacement
+        drawWithoutReplacement.addEventListener('click', function() {
+            if (items.length === 0) {
+                return;
+            }
+            
+            // Get available items (not drawn)
+            const availableItems = items.filter(item => !item.drawn);
+            
+            if (availableItems.length === 0) {
+                probabilityInfo.textContent = 'All items have been drawn!';
+                return;
+            }
+            
+            // Calculate total probability of available items
+            const totalProbability = availableItems.reduce((sum, item) => sum + item.probability, 0);
+            
+            if (totalProbability <= 0) {
+                return;
+            }
+            
+            // Show drawing animation
+            winnerDisplay.textContent = 'Drawing...';
+            winnerDisplay.className = 'drawing';
+            probabilityInfo.textContent = 'Calculating probabilities...';
+            
+            // Simulate drawing delay
+            setTimeout(() => {
+                // Perform the draw
+                const winner = drawWinnerFromAvailable(availableItems, totalProbability);
+                
+                // Mark as drawn
+                const winnerIndex = items.findIndex(item => item.name === winner.name);
+                if (winnerIndex !== -1) {
+                    items[winnerIndex].drawn = true;
+                }
+                
+                // Display winner
+                winnerDisplay.textContent = winner.name;
+                winnerDisplay.className = '';
+                
+                // Calculate and display probability
+                const percentage = (winner.probability / totalProbability * 100).toFixed(1);
+                probabilityInfo.textContent = `This item had a ${percentage}% chance of winning (without replacement)`;
+                
+                // Add to history
+                drawHistory.push({
+                    winner: winner.name,
+                    probability: percentage,
+                    time: new Date(),
+                    type: 'Without Replacement'
+                });
+                updateHistory();
+                
+                // Create confetti effect
+                createConfetti();
+                
+                // Highlight the winner in the list
+                highlightWinner(winner.name);
+                
+                // Update UI
+                renderItems();
+            }, 2000);
+        });
+        
+        // Draw a winner based on probabilities
+        function drawWinner() {
+            // Calculate total probability
+            const totalProbability = items.reduce((sum, item) => sum + item.probability, 0);
+            
+            // Generate random number between 0 and totalProbability
+            const random = Math.random() * totalProbability;
+            
+            // Find the winner
+            let current = 0;
+            for (const item of items) {
+                current += item.probability;
+                if (random <= current) {
+                    return item;
+                }
+            }
+            
+            // Fallback to last item
+            return items[items.length - 1];
+        }
+        
+        // Draw a winner from available items
+        function drawWinnerFromAvailable(availableItems, totalProbability) {
+            // Generate random number between 0 and totalProbability
+            const random = Math.random() * totalProbability;
+            
+            // Find the winner
+            let current = 0;
+            for (const item of availableItems) {
+                current += item.probability;
+                if (random <= current) {
+                    return item;
+                }
+            }
+            
+            // Fallback to last item
+            return availableItems[availableItems.length - 1];
+        }
+        
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffd166', '#6a11cb', '#2575fc'];
+            
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                    confetti.style.opacity = '1';
+                    document.body.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 10);
+            }
+        }
+        
+        // Highlight winner in the list
+        function highlightWinner(winnerName) {
+            const items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                if (item.querySelector('.item-name').textContent === winnerName) {
+                    item.classList.add('highlight');
+                    setTimeout(() => {
+                        item.classList.remove('highlight');
+                    }, 2000);
+                }
+            });
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
