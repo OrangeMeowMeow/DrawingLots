@@ -1,1 +1,2 @@
 # DrawingLots
+# Have fun
